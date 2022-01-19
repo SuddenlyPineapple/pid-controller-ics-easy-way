@@ -9,11 +9,11 @@ class PIDController:
     def __init__(self, ):
         self.pid = {
             'error': [0, ],  # uchyb regulacji - regulation error
-            'gain': 1.0,  # wartość wzmocnienia regulatora
-            'sample_time': 0.05,  # czas próbkowania
-            'differential_time': 0.05,  # czas wyprzedzenia
-            'integration_time': 0.75,  # czas zdwojenia
-            'h_z': [],  # wartość zadana
+            'gain': .6,  # wartość wzmocnienia regulatora
+            'sample_time': .05,  # czas próbkowania
+            'differential_time': .05,  # czas wyprzedzenia
+            'integration_time': .75,  # czas zdwojenia
+            'h_z': [8],  # wartość zadana
             'h': [0, ]  # poziom substancji w zbiorniku
         }
         self.valve = {
@@ -35,34 +35,49 @@ class PIDController:
             'Q_o': [],  # natężenie odpływu
         }
         self.fuzzy_val = {
-            'k_e': 0.25,  # error
-            'k_ce': 0.01,  # errorChange
-            'k_u': 0.02,  # u
+            'k_e': 0.20,  # error
+            'k_ce': 0.03,  # errorChange
+            'k_u': 0.1,  # u
         }
         self.N = 10000
         self.x = [0, ]  # wzór na  sampletime to 1000 * sample time
 
     # here comes arguments setup
-    def set_data(self):
-        self.pid['sample_time'] = float(0.05)
+    def set_data(self,
+                 sample_time=0.05,
+                 differential_time=0.15,
+                 integration_time=0.25,
+                 gain=1.0,
+                 k_e=10,
+                 k_ce=0.05,
+                 k_u=0.1,
+                 h_z=8,
+                 A=2.5,
+                 B=0.25,
+                 h_max=10,
+                 u_max=10,
+                 u_min=-10,
+                 Q_d_max=1
+                 ):
+        self.pid['sample_time'] = float(sample_time)
 
         # Classic PID params
-        self.pid['differential_time'] = float(0.15)  # not used in Fuzzy method
-        self.pid['integration_time'] = float(0.25)  # not used in Fuzzy method
-        self.pid['gain'] = float(0.05)  # not used in Fuzzy method
+        self.pid['differential_time'] = float(differential_time)  # not used in Fuzzy method
+        self.pid['integration_time'] = float(integration_time)  # not used in Fuzzy method
+        self.pid['gain'] = float(gain)  # not used in Fuzzy method
 
         # Fuzzy Params
-        self.fuzzy_val['k_e'] = float(10)
-        self.fuzzy_val['k_ce'] = float(0.05)
-        self.fuzzy_val['k_u'] = float(0.1)
+        self.fuzzy_val['k_e'] = float(k_e)
+        self.fuzzy_val['k_ce'] = float(k_ce)
+        self.fuzzy_val['k_u'] = float(k_u)
 
-        self.pid['h_z'].append(float(8))
-        self.tank['A'] = float(2.5)
-        self.tank['B'] = float(0.25)
-        self.tank['h_max'] = int(10)
-        self.valve['u_max'] = int(10)
-        self.valve['u_min'] = int(-10)
-        self.valve['Q_d_max'] = int(1)
+        self.pid['h_z'].append(float(h_z))
+        self.tank['A'] = float(A)
+        self.tank['B'] = float(B)
+        self.tank['h_max'] = int(h_max)
+        self.valve['u_max'] = int(u_max)
+        self.valve['u_min'] = int(u_min)
+        self.valve['Q_d_max'] = int(Q_d_max)
 
     # CLEARING DATA
     def reset_data(self):
@@ -99,7 +114,7 @@ class PIDController:
 
     # CLASSIC PID ONLY SIMULATION
     def pid_controller_simulation(self):
-        self.set_data()
+        # self.set_data()
         for n in range(0, self.N):
             self.x.append(int(self.pid['sample_time'] * n))
             self.pid_controller()
@@ -109,7 +124,7 @@ class PIDController:
     # FUZZY PID WITH SIMULATION
     def fuzzy_pid_controller_with_simulation(self):
         # fuzzyValue
-        self.set_data()
+        # self.set_data()
 
         ins = ['DU', 'SU', 'SU', 'Z', 'MD', 'SD', 'DD'] # przestrzen lingwistyczna Xl
         outs = ['BDU', 'DU', 'SU', 'MU', 'Z', 'MD', 'SD', 'DD', 'BDD'] # wartosci lingwiztyczne
