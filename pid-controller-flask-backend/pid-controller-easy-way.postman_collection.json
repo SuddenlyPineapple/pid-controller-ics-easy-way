@@ -1,0 +1,155 @@
+{
+	"info": {
+		"_postman_id": "20c8bf52-d9d3-4590-9cb1-a82efa3bfa42",
+		"name": "pid-controller-easy-way",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "set-params",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/set-params?gain=0.4&k_e=0.5",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"set-params"
+					],
+					"query": [
+						{
+							"key": "gain",
+							"value": "0.4"
+						},
+						{
+							"key": "k_e",
+							"value": "0.5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-pid-chart",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/get-pid-chart",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"get-pid-chart"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-fuzzy-chart",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/get-fuzzy-chart",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"get-fuzzy-chart"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-pid-and-fuzzy-chart",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/get-pid-and-fuzzy-chart",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"get-pid-and-fuzzy-chart"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generate-pid",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/generate-pid",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"generate-pid"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generate-fuzzy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/generate-fuzzy",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"generate-fuzzy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generate-comparison",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/generate-comparison",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"generate-comparison"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
