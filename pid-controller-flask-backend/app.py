@@ -6,6 +6,7 @@ from PIDController import PIDController
 app = Flask(__name__)
 
 pid_logic = PIDController()
+task_set = []
 
 @app.route('/')
 def health_check():  # put application's code here
@@ -34,30 +35,45 @@ def set_params():
 
 @app.route('/generate-pid', methods=['POST'])
 def generate_pid():
-    heavy_process = Process(  # Create a daemonic process with heavy "my_func"
-        target=pid_logic.classic_pid_chart,
-        daemon=True
-    )
-    heavy_process.start()
-    return "OK", 201, {"Content-Type": "application/text"}
+    if task_set==[] or (task_set and task_set[0].is_alive()==False):
+        task_set.clear()
+        heavy_process = Process(  # Create a daemonic process with heavy "my_func"
+            target=pid_logic.classic_pid_chart,
+            daemon=True
+        )
+        heavy_process.start()
+        task_set.append(heavy_process)
+        return "Task dispatched successfully!", 201, {"Content-Type": "application/text"}
+    else:
+        return "Already dispatched!", 409, {"Content-Type": "application/text"}
 
 @app.route('/generate-fuzzy', methods=['POST'])
 def generate_fuzzy():
-    heavy_process = Process(  # Create a daemonic process with heavy "my_func"
-        target=pid_logic.fuzzy_chart,
-        daemon=True
-    )
-    heavy_process.start()
-    return "OK", 201, {"Content-Type": "application/text"}
+    if task_set==[] or (task_set and task_set[0].is_alive()==False):
+        task_set.clear()
+        heavy_process = Process(  # Create a daemonic process with heavy "my_func"
+            target=pid_logic.fuzzy_chart,
+            daemon=True
+        )
+        heavy_process.start()
+        task_set.append(heavy_process)
+        return "Task dispatched successfully!", 201, {"Content-Type": "application/text"}
+    else:
+        return "Already dispatched!", 409, {"Content-Type": "application/text"}
 
 @app.route('/generate-comparison', methods=['POST'])
 def generate_comparison():
-    heavy_process = Process(  # Create a daemonic process with heavy "my_func"
-        target=pid_logic.comparison_chart,
-        daemon=True
-    )
-    heavy_process.start()
-    return "OK", 201, {"Content-Type": "application/text"}
+    if task_set==[] or (task_set and task_set[0].is_alive()==False):
+        task_set.clear()
+        heavy_process = Process(  # Create a daemonic process with heavy "my_func"
+            target=pid_logic.comparison_chart,
+            daemon=True
+        )
+        heavy_process.start()
+        task_set.append(heavy_process)
+        return "Task dispatched successfully!", 201, {"Content-Type": "application/text"}
+    else:
+        return "Already dispatched!", 409, {"Content-Type": "application/text"}
 
 @app.route('/get-pid-chart')
 def get_pid_chart():
