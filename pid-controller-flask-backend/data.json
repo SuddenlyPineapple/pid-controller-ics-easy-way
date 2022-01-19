@@ -1,0 +1,13 @@
+{
+  "sample_time": "0.03",
+  "differential_time": "0.05",
+  "integration_time": "0.75",
+  "gain": "1",
+  "h_z": "3",
+  "A": "2.5",
+  "B": "0.25",
+  "h_max": "10",
+  "u_max": "10",
+  "u_min": "-10",
+  "Q_d_max": "1"
+}

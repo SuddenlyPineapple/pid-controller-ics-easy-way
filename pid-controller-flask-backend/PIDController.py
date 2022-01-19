@@ -9,11 +9,11 @@ class PIDController:
     def __init__(self, ):
         self.pid = {
             'error': [0, ],  # uchyb regulacji - regulation error
-            'gain': .6,  # wartość wzmocnienia regulatora
-            'sample_time': .05,  # czas próbkowania
-            'differential_time': .05,  # czas wyprzedzenia
-            'integration_time': .75,  # czas zdwojenia
-            'h_z': [8],  # wartość zadana
+            'gain': 0.2,  # wartość wzmocnienia regulatora
+            'sample_time': 0.05,  # czas próbkowania
+            'differential_time': 0.05,  # czas wyprzedzenia
+            'integration_time': 0.75,  # czas zdwojenia
+            'h_z': [],  # wartość zadana
             'h': [0, ]  # poziom substancji w zbiorniku
         }
         self.valve = {
@@ -37,7 +37,7 @@ class PIDController:
         self.fuzzy_val = {
             'k_e': 0.20,  # error
             'k_ce': 0.03,  # errorChange
-            'k_u': 0.1,  # u
+            'k_u': 0.05,  # u
         }
         self.N = 10000
         self.x = [0, ]  # wzór na  sampletime to 1000 * sample time
@@ -47,8 +47,8 @@ class PIDController:
                  sample_time=0.05,
                  differential_time=0.15,
                  integration_time=0.25,
-                 gain=1.0,
-                 k_e=10,
+                 gain=0.1,
+                 k_e=0.2,
                  k_ce=0.05,
                  k_u=0.1,
                  h_z=8,
@@ -124,7 +124,7 @@ class PIDController:
     # FUZZY PID WITH SIMULATION
     def fuzzy_pid_controller_with_simulation(self):
         # fuzzyValue
-        # self.set_data()
+        self.set_data()
 
         ins = ['DU', 'SU', 'SU', 'Z', 'MD', 'SD', 'DD'] # przestrzen lingwistyczna Xl
         outs = ['BDU', 'DU', 'SU', 'MU', 'Z', 'MD', 'SD', 'DD', 'BDD'] # wartosci lingwiztyczne
@@ -388,6 +388,7 @@ class PIDController:
         self.reset_data()
 
     def comparison_chart(self):
+        print("Comparison chart generation started!")
         self.pid_controller_simulation()
         self.fuzzy_pid_controller_with_simulation()
 
@@ -397,9 +398,10 @@ class PIDController:
 
         self.generate_chart("comparison_chart.png", "PID vs Fuzzy PID", draw_plots, 3)
         self.reset_data()
+        print("Comparison chart generation ended!")
 
 
-test = PIDController()
-test.comparison_chart()
+# test = PIDController()
+# test.comparison_chart()
 # test.fuzzy_chart()
 # test.classic_pid_chart()
