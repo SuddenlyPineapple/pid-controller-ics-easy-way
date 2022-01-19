@@ -12,7 +12,7 @@ def health_check():  # put application's code here
     return 'Healthy!'
 
 
-@app.route('/set-params')
+@app.route('/set-params', methods=['POST'])
 def set_params():
     pid_logic.set_data(
      sample_time=request.args.get('sample_time',0.05),
@@ -32,8 +32,25 @@ def set_params():
     )
     return "OK", 201, {"Content-Type": "application/text"}
 
+@app.route('/generate-pid', methods=['POST'])
+def generate_pid():
+    heavy_process = Process(  # Create a daemonic process with heavy "my_func"
+        target=pid_logic.classic_pid_chart,
+        daemon=True
+    )
+    heavy_process.start()
+    return "OK", 201, {"Content-Type": "application/text"}
 
-@app.route('/generate-comparison')
+@app.route('/generate-fuzzy', methods=['POST'])
+def generate_fuzzy():
+    heavy_process = Process(  # Create a daemonic process with heavy "my_func"
+        target=pid_logic.fuzzy_chart,
+        daemon=True
+    )
+    heavy_process.start()
+    return "OK", 201, {"Content-Type": "application/text"}
+
+@app.route('/generate-comparison', methods=['POST'])
 def generate_comparison():
     heavy_process = Process(  # Create a daemonic process with heavy "my_func"
         target=pid_logic.comparison_chart,
@@ -41,7 +58,6 @@ def generate_comparison():
     )
     heavy_process.start()
     return "OK", 201, {"Content-Type": "application/text"}
-
 
 @app.route('/get-pid-chart')
 def get_pid_chart():

@@ -13,7 +13,7 @@ class PIDController:
             'sample_time': 0.05,  # czas próbkowania
             'differential_time': 0.05,  # czas wyprzedzenia
             'integration_time': 0.75,  # czas zdwojenia
-            'h_z': [],  # wartość zadana
+            'h_z': [3, ],  # wartość zadana
             'h': [0, ]  # poziom substancji w zbiorniku
         }
         self.valve = {
@@ -42,6 +42,9 @@ class PIDController:
         self.N = 10000
         self.x = [0, ]  # wzór na  sampletime to 1000 * sample time
 
+        self.reset_sim_data = None
+        self.set_data()
+
     # here comes arguments setup
     def set_data(self,
                  sample_time=0.05,
@@ -57,33 +60,36 @@ class PIDController:
                  h_max=10,
                  u_max=10,
                  u_min=-10,
-                 Q_d_max=1
+                 Q_d_max=1,
+                 N=10000
                  ):
-        self.pid['sample_time'] = float(sample_time)
+        def reset_sim_data():
+            self.pid['sample_time'] = float(sample_time)
 
-        # Classic PID params
-        self.pid['differential_time'] = float(differential_time)  # not used in Fuzzy method
-        self.pid['integration_time'] = float(integration_time)  # not used in Fuzzy method
-        self.pid['gain'] = float(gain)  # not used in Fuzzy method
+            # Classic PID params
+            self.pid['differential_time'] = float(differential_time)  # not used in Fuzzy method
+            self.pid['integration_time'] = float(integration_time)  # not used in Fuzzy method
+            self.pid['gain'] = float(gain)  # not used in Fuzzy method
 
-        # Fuzzy Params
-        self.fuzzy_val['k_e'] = float(k_e)
-        self.fuzzy_val['k_ce'] = float(k_ce)
-        self.fuzzy_val['k_u'] = float(k_u)
+            # Fuzzy Params
+            self.fuzzy_val['k_e'] = float(k_e)
+            self.fuzzy_val['k_ce'] = float(k_ce)
+            self.fuzzy_val['k_u'] = float(k_u)
 
-        self.pid['h_z'].append(float(h_z))
-        self.tank['A'] = float(A)
-        self.tank['B'] = float(B)
-        self.tank['h_max'] = int(h_max)
-        self.valve['u_max'] = int(u_max)
-        self.valve['u_min'] = int(u_min)
-        self.valve['Q_d_max'] = int(Q_d_max)
+            self.pid['h_z'].append(float(h_z))
+            self.tank['A'] = float(A)
+            self.tank['B'] = float(B)
+            self.tank['h_max'] = int(h_max)
+            self.valve['u_max'] = int(u_max)
+            self.valve['u_min'] = int(u_min)
+            self.valve['Q_d_max'] = int(Q_d_max)
+            self.N = int(N)
+        self.reset_sim_data = reset_sim_data
 
     # CLEARING DATA
     def reset_data(self):
         self.pid['h_z'] = []
         self.pid['h'] = [0, ]
-        self.N = 10000
         self.x = [0, ]
         self.valve['y'] = [[], [], [], [], []]
         plt.clf()
@@ -114,7 +120,7 @@ class PIDController:
 
     # CLASSIC PID ONLY SIMULATION
     def pid_controller_simulation(self):
-        # self.set_data()
+        self.reset_sim_data()
         for n in range(0, self.N):
             self.x.append(int(self.pid['sample_time'] * n))
             self.pid_controller()
@@ -123,8 +129,7 @@ class PIDController:
 
     # FUZZY PID WITH SIMULATION
     def fuzzy_pid_controller_with_simulation(self):
-        # fuzzyValue
-        self.set_data()
+        self.reset_sim_data()
 
         ins = ['DU', 'SU', 'SU', 'Z', 'MD', 'SD', 'DD'] # przestrzen lingwistyczna Xl
         outs = ['BDU', 'DU', 'SU', 'MU', 'Z', 'MD', 'SD', 'DD', 'BDD'] # wartosci lingwiztyczne
@@ -137,22 +142,6 @@ class PIDController:
         e.automf(7, names=ins)
         ce.automf(7, names=ins)
 
-        # e['DU'] = fuzz.trimf(e.universe, [-1.333, -1, -0.6667])
-        # e['SU'] = fuzz.trimf(e.universe, [-1, -0.6667, -0.3333])
-        # e['SU'] = fuzz.trimf(e.universe, [-0.6667, -0.3333, -5.551e-17])
-        # e['Z'] = fuzz.trimf(e.universe, [-0.3333, 0.0, 0.3333])
-        # e['MD'] = fuzz.trimf(e.universe, [-5.551e-17, 0.3333, 0.6667])
-        # e['SD'] = fuzz.trimf(e.universe, [0.3333, 0.6667, 1])
-        # e['DD'] = fuzz.trimf(e.universe, [0.6667, 1, 1.333])
-        #
-        # ce['DU'] = fuzz.trimf(ce.universe, [-1.333, -1, -0.6667])
-        # ce['SU'] = fuzz.trimf(ce.universe, [-1, -0.6667, -0.3333])
-        # ce['SU'] = fuzz.trimf(ce.universe, [-0.6667, -0.3333, -5.551e-17])
-        # ce['Z'] = fuzz.trimf(ce.universe, [-0.3333, 0.0, 0.3333])
-        # ce['MD'] = fuzz.trimf(ce.universe, [-5.551e-17, 0.3333, 0.6667])
-        # ce['SD'] = fuzz.trimf(ce.universe, [0.3333, 0.6667, 1])
-        # ce['DD'] = fuzz.trimf(ce.universe, [0.6667, 1, 1.333])
-
         cu['BDU'] = fuzz.trimf(cu.universe, [-1.0, -1.0, -0.7])
         cu['DU'] = fuzz.trimf(cu.universe, [-1.0, -0.7, -0.4])
         cu['SU'] = fuzz.trimf(cu.universe, [-0.7, -0.4, -0.1])
@@ -164,67 +153,6 @@ class PIDController:
         cu['BDD'] = fuzz.trimf(cu.universe, [0.7, 1.0, 1.0])
 
         # ------------------ Reguly sterowania -------------------
-
-        # # BDU
-        # rules = [ctrl.Rule(e[ins[0]] & ce[ins[0]], cu[outs[0]])]
-        # rules.append(ctrl.Rule(e[ins[1]] & ce[ins[0]], cu[outs[0]]))
-        # rules.append(ctrl.Rule(e[ins[0]] & ce[ins[1]], cu[outs[0]]))
-        # rules.append(ctrl.Rule(e[ins[1]] & ce[ins[1]], cu[outs[0]]))
-        # rules.append(ctrl.Rule(e[ins[2]] & ce[ins[0]], cu[outs[0]]))
-        # rules.append(ctrl.Rule(e[ins[0]] & ce[ins[2]], cu[outs[0]]))
-        # # DU
-        # rules.append(ctrl.Rule(e[ins[3]] & ce[ins[0]], cu[outs[1]]))
-        # rules.append(ctrl.Rule(e[ins[2]] & ce[ins[1]], cu[outs[1]]))
-        # rules.append(ctrl.Rule(e[ins[1]] & ce[ins[2]], cu[outs[1]]))
-        # rules.append(ctrl.Rule(e[ins[0]] & ce[ins[3]], cu[outs[1]]))
-        # # SU
-        # rules.append(ctrl.Rule(e[ins[0]] & ce[ins[4]], cu[outs[2]]))
-        # rules.append(ctrl.Rule(e[ins[1]] & ce[ins[3]], cu[outs[2]]))
-        # rules.append(ctrl.Rule(e[ins[2]] & ce[ins[2]], cu[outs[2]]))
-        # rules.append(ctrl.Rule(e[ins[3]] & ce[ins[1]], cu[outs[2]]))
-        # rules.append(ctrl.Rule(e[ins[4]] & ce[ins[0]], cu[outs[2]]))
-        # # MU
-        # rules.append(ctrl.Rule(e[ins[5]] & ce[ins[0]], cu[outs[3]]))
-        # rules.append(ctrl.Rule(e[ins[4]] & ce[ins[1]], cu[outs[3]]))
-        # rules.append(ctrl.Rule(e[ins[3]] & ce[ins[2]], cu[outs[3]]))
-        # rules.append(ctrl.Rule(e[ins[2]] & ce[ins[3]], cu[outs[3]]))
-        # rules.append(ctrl.Rule(e[ins[1]] & ce[ins[4]], cu[outs[3]]))
-        # rules.append(ctrl.Rule(e[ins[0]] & ce[ins[5]], cu[outs[3]]))
-        # # Z
-        # rules.append(ctrl.Rule(e[ins[0]] & ce[ins[6]], cu[outs[4]]))
-        # rules.append(ctrl.Rule(e[ins[1]] & ce[ins[5]], cu[outs[4]]))
-        # rules.append(ctrl.Rule(e[ins[2]] & ce[ins[4]], cu[outs[4]]))
-        # rules.append(ctrl.Rule(e[ins[3]] & ce[ins[3]], cu[outs[4]]))
-        # rules.append(ctrl.Rule(e[ins[4]] & ce[ins[2]], cu[outs[4]]))
-        # rules.append(ctrl.Rule(e[ins[5]] & ce[ins[1]], cu[outs[4]]))
-        # rules.append(ctrl.Rule(e[ins[6]] & ce[ins[0]], cu[outs[4]]))
-        # # MD
-        # rules.append(ctrl.Rule(e[ins[1]] & ce[ins[6]], cu[outs[5]]))
-        # rules.append(ctrl.Rule(e[ins[2]] & ce[ins[5]], cu[outs[5]]))
-        # rules.append(ctrl.Rule(e[ins[3]] & ce[ins[4]], cu[outs[5]]))
-        # rules.append(ctrl.Rule(e[ins[4]] & ce[ins[3]], cu[outs[5]]))
-        # rules.append(ctrl.Rule(e[ins[5]] & ce[ins[2]], cu[outs[5]]))
-        # rules.append(ctrl.Rule(e[ins[6]] & ce[ins[1]], cu[outs[5]]))
-        # # SD
-        # rules.append(ctrl.Rule(e[ins[6]] & ce[ins[2]], cu[outs[6]]))
-        # rules.append(ctrl.Rule(e[ins[5]] & ce[ins[3]], cu[outs[6]]))
-        # rules.append(ctrl.Rule(e[ins[4]] & ce[ins[4]], cu[outs[6]]))
-        # rules.append(ctrl.Rule(e[ins[3]] & ce[ins[5]], cu[outs[6]]))
-        # rules.append(ctrl.Rule(e[ins[2]] & ce[ins[6]], cu[outs[6]]))
-        # # DD
-        # rules.append(ctrl.Rule(e[ins[3]] & ce[ins[6]], cu[outs[7]]))
-        # rules.append(ctrl.Rule(e[ins[4]] & ce[ins[5]], cu[outs[7]]))
-        # rules.append(ctrl.Rule(e[ins[5]] & ce[ins[4]], cu[outs[7]]))
-        # rules.append(ctrl.Rule(e[ins[6]] & ce[ins[3]], cu[outs[7]]))
-        # # BDD
-        # rules.append(ctrl.Rule(e[ins[6]] & ce[ins[4]], cu[outs[8]]))
-        # rules.append(ctrl.Rule(e[ins[5]] & ce[ins[5]], cu[outs[8]]))
-        # rules.append(ctrl.Rule(e[ins[4]] & ce[ins[6]], cu[outs[8]]))
-        # rules.append(ctrl.Rule(e[ins[6]] & ce[ins[5]], cu[outs[8]]))
-        # rules.append(ctrl.Rule(e[ins[5]] & ce[ins[6]], cu[outs[8]]))
-        # rules.append(ctrl.Rule(e[ins[6]] & ce[ins[6]], cu[outs[8]]))
-        
-        # Different rules
 
         rules = [ctrl.Rule(e['DU'] & ce['DU'], cu['BDU'])]
         rules.append(ctrl.Rule(e['SU'] & ce['DU'], cu['BDU']))
@@ -366,6 +294,7 @@ class PIDController:
         plt.savefig('static/%s' % filename)
 
     def classic_pid_chart(self):
+        print("Classic PID chart generation started!")
         self.pid_controller_simulation()
 
         def draw_plot():
@@ -373,8 +302,10 @@ class PIDController:
 
         self.generate_chart("plot.png", "Wykres zależności poziomu substancji w zbiorniku - PID", draw_plot, 1)
         self.reset_data()
+        print("Classic PID chart generation ended!")
 
     def fuzzy_chart(self):
+        print("Fuzzy chart generation started!")
         self.fuzzy_pid_controller_with_simulation()
 
         def draw_plot():
@@ -386,6 +317,7 @@ class PIDController:
             draw_plot, 2
         )
         self.reset_data()
+        print("Fuzzy chart generation ended!")
 
     def comparison_chart(self):
         print("Comparison chart generation started!")
