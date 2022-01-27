@@ -61,6 +61,7 @@ class PIDController:
                  u_max=10,
                  u_min=-10,
                  Q_d_max=1,
+                 Q_d_min=0,
                  N=10000
                  ):
         def reset_sim_data():
@@ -83,6 +84,7 @@ class PIDController:
             self.valve['u_max'] = int(u_max)
             self.valve['u_min'] = int(u_min)
             self.valve['Q_d_max'] = int(Q_d_max)
+            self.valve['Q_d_min'] = int(Q_d_min)
             self.N = int(N)
         self.reset_sim_data = reset_sim_data
 

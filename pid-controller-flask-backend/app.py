@@ -1,19 +1,31 @@
-from flask import Flask, request, send_from_directory
+from flask import Flask, request, send_from_directory, jsonify
+from flask_cors import CORS, cross_origin
 from multiprocessing import Process
 from PIDController import PIDController
 
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 pid_logic = PIDController()
 task_set = []
 
 @app.route('/')
+@cross_origin()
 def health_check():  # put application's code here
-    return 'Healthy!'
+    return jsonify({"message": "Healthy"}), 200, {"Content-Type": "application/json"}
 
+@app.route('/state')
+@cross_origin()
+def check_status():
+    if task_set==[] or (task_set and task_set[0].is_alive()==False):
+        return jsonify({"message": "Not busy!"}), 200, {"Content-Type": "application/json"}
+    else:
+        return jsonify({"message": "Machine currently busy!"}), 409, {"Content-Type": "application/json"}
 
 @app.route('/set-params', methods=['POST'])
+@cross_origin()
 def set_params():
     pid_logic.set_data(
      sample_time=request.args.get('sample_time',0.05),
@@ -31,7 +43,7 @@ def set_params():
      u_min=request.args.get('u_min',-10),
      Q_d_max=request.args.get('Q_d_max',1),
     )
-    return "OK", 201, {"Content-Type": "application/text"}
+    return jsonify({"message": "Parameters changed successfully!"}), 201, {"Content-Type": "application/json"}
 
 @app.route('/generate-pid', methods=['POST'])
 def generate_pid():
