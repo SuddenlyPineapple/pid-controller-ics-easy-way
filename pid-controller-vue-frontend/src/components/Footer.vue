@@ -16,11 +16,14 @@
       <v-row>
         <v-col cols="12" md="9" class="px-5">
           <v-card-text class="white--text pt-0 text-left">
-            Description
+            PID and Fuzzy PID regulator logic simulation project for Intelligent
+            Control Systems classes at Poznan University of Technology.
           </v-card-text>
           <v-card-text class="white--text pt-0 text-left">
-            Made with 💖 using <strong class="accent--text">Python</strong>,
-            <strong class="accent--text">Vue</strong> and
+            Made with 💖 using
+            <strong class="accent--text">Python</strong>,
+            <strong class="accent--text">Flask</strong> with a bit of
+            concurrency, <strong class="accent--text">Vue</strong> and
             <strong class="accent--text">Vuetify.</strong>
           </v-card-text>
         </v-col>

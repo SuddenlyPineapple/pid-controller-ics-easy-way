@@ -5,8 +5,8 @@
       @click="toggleDrawer"
     />
     <v-toolbar-title class="headline text-uppercase">
-      <span class="accent--text">Inteligent</span>
-      <span class="font-weight-light white--text">Control</span>
+      <span class="accent--text">Intelligent </span>
+      <span class="font-weight-light white--text">Control </span>
       <span class="accent--text">Systems</span>
     </v-toolbar-title>
     <v-spacer></v-spacer>

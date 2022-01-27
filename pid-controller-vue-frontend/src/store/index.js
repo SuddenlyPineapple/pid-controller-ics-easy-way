@@ -8,8 +8,16 @@ export default new Vuex.Store({
     drawer: false,
     routes: [
       {
-        text: "Dashboard",
+        text: "Simulation",
+        to: "/simulation",
+      },
+      {
+        text: "Set Parameters",
         to: "/",
+      },
+      {
+        text: "About",
+        to: "/about",
       },
     ],
   },

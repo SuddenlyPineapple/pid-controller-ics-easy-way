@@ -2,9 +2,9 @@
   <v-navigation-drawer v-model="drawer" app temporary color="primary">
     <v-container>
       <v-flex xs12 class="text-xs-center my-4">
-        <h1 class="white--text">
-          <span class="accent--text">Inteligent</span>
-          <span class="font-weight-light white--text">Control</span>
+        <h1 class="headline text-uppercase">
+          <span class="accent--text">Inteligent</span><br />
+          <span class="font-weight-light white--text">Control</span><br />
           <span class="accent--text">Systems</span>
         </h1>
       </v-flex>
