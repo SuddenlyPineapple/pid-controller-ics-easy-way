@@ -291,7 +291,7 @@ class PIDController:
         plt.ylabel('h [m]')
         plt.title(title, fontsize=14)
         plot_func()
-        plt.axhline(self.pid['h_z'][-1], label='$wartość\ zadana$', color='red', linewidth='2', linestyle='--')
+        plt.axhline(self.pid['h_z'][-1], label='$desired\ value$', color='red', linewidth='2', linestyle='--')
         plt.legend()
         plt.savefig('static/%s' % filename)
 
@@ -302,7 +302,7 @@ class PIDController:
         def draw_plot():
             plt.plot(self.x, self.pid['h'], label='$PID$', color='blue')
 
-        self.generate_chart("plot.png", "Wykres zależności poziomu substancji w zbiorniku - PID", draw_plot, 1)
+        self.generate_chart("plot.png", "Classic PID", draw_plot, 1)
         self.reset_data()
         print("Classic PID chart generation ended!")
 
@@ -315,7 +315,7 @@ class PIDController:
 
         self.generate_chart(
             "fuzzy_chart.png",
-            "Wykres zależności poziomu substancji w zbiorniku - PID Fuzzy",
+            "PID Fuzzy",
             draw_plot, 2
         )
         self.reset_data()

@@ -55,9 +55,10 @@ def generate_pid():
         )
         heavy_process.start()
         task_set.append(heavy_process)
-        return "Task dispatched successfully!", 201, {"Content-Type": "application/text"}
+        return jsonify({"message": "Task dispatched successfully!"}), 201, {"Content-Type": "application/json"}
     else:
-        return "Already dispatched!", 409, {"Content-Type": "application/text"}
+        return jsonify({"message": "Machine currently busy!"}), 409, {"Content-Type": "application/json"}
+
 
 @app.route('/generate-fuzzy', methods=['POST'])
 def generate_fuzzy():
@@ -69,9 +70,9 @@ def generate_fuzzy():
         )
         heavy_process.start()
         task_set.append(heavy_process)
-        return "Task dispatched successfully!", 201, {"Content-Type": "application/text"}
+        return jsonify({"message": "Task dispatched successfully!"}), 201, {"Content-Type": "application/json"}
     else:
-        return "Already dispatched!", 409, {"Content-Type": "application/text"}
+        return jsonify({"message": "Machine currently busy!"}), 409, {"Content-Type": "application/json"}
 
 @app.route('/generate-comparison', methods=['POST'])
 def generate_comparison():
@@ -83,9 +84,9 @@ def generate_comparison():
         )
         heavy_process.start()
         task_set.append(heavy_process)
-        return "Task dispatched successfully!", 201, {"Content-Type": "application/text"}
+        return jsonify({"message": "Task dispatched successfully!"}), 201, {"Content-Type": "application/json"}
     else:
-        return "Already dispatched!", 409, {"Content-Type": "application/text"}
+        return jsonify({"message": "Machine currently busy!"}), 409, {"Content-Type": "application/json"}
 
 @app.route('/get-pid-chart')
 def get_pid_chart():
