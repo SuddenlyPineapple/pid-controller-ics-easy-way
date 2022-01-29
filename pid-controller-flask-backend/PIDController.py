@@ -61,6 +61,7 @@ class PIDController:
                  u_max=10,
                  u_min=-10,
                  Q_d_max=1,
+                 Q_d_min=0,
                  N=10000
                  ):
         def reset_sim_data():
@@ -83,6 +84,7 @@ class PIDController:
             self.valve['u_max'] = int(u_max)
             self.valve['u_min'] = int(u_min)
             self.valve['Q_d_max'] = int(Q_d_max)
+            self.valve['Q_d_min'] = int(Q_d_min)
             self.N = int(N)
         self.reset_sim_data = reset_sim_data
 
@@ -289,7 +291,7 @@ class PIDController:
         plt.ylabel('h [m]')
         plt.title(title, fontsize=14)
         plot_func()
-        plt.axhline(self.pid['h_z'][-1], label='$wartość\ zadana$', color='red', linewidth='2', linestyle='--')
+        plt.axhline(self.pid['h_z'][-1], label='$desired\ value$', color='red', linewidth='2', linestyle='--')
         plt.legend()
         plt.savefig('static/%s' % filename)
 
@@ -300,7 +302,7 @@ class PIDController:
         def draw_plot():
             plt.plot(self.x, self.pid['h'], label='$PID$', color='blue')
 
-        self.generate_chart("plot.png", "Wykres zależności poziomu substancji w zbiorniku - PID", draw_plot, 1)
+        self.generate_chart("plot.png", "Classic PID", draw_plot, 1)
         self.reset_data()
         print("Classic PID chart generation ended!")
 
@@ -313,7 +315,7 @@ class PIDController:
 
         self.generate_chart(
             "fuzzy_chart.png",
-            "Wykres zależności poziomu substancji w zbiorniku - PID Fuzzy",
+            "PID Fuzzy",
             draw_plot, 2
         )
         self.reset_data()
