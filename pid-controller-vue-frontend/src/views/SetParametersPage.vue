@@ -90,7 +90,7 @@
           </v-slider>
         </v-col>
         <v-col cols="12" md="6" lg="4" xl="3">
-          <h3>Error</h3>
+          <h3>Error (k_e)</h3>
           <v-slider
             v-model="parameters.k_e"
             class="align-center mb-0 pb-0"
@@ -111,7 +111,7 @@
           </v-slider>
         </v-col>
         <v-col cols="12" md="6" lg="4" xl="3">
-          <h3>Current Error</h3>
+          <h3>Current Error (k_ce)</h3>
           <v-slider
             v-model="parameters.k_ce"
             class="align-center mb-0 pb-0"
@@ -132,7 +132,7 @@
           </v-slider>
         </v-col>
         <v-col cols="12" md="6" lg="4" xl="3">
-          <h3>Uchyb początkowy</h3>
+          <h3>Initial error (k_u)</h3>
           <v-slider
             v-model="parameters.k_u"
             class="align-center mb-0 pb-0"
@@ -174,7 +174,7 @@
           </v-slider>
         </v-col>
         <v-col cols="12" md="6" lg="4" xl="3">
-          <h3>Wysokość zadana (h_z w metrach)</h3>
+          <h3>The value of the task (h_z in meters)</h3>
           <v-slider
             v-model="parameters.h_z"
             class="align-center mb-0 pb-0"
@@ -195,7 +195,7 @@
           </v-slider>
         </v-col>
         <v-col cols="12" md="6" lg="4" xl="3">
-          <h3>The cross-sectional area of the reservoir</h3>
+          <h3>The cross-sectional area of the reservoir (A[m2])</h3>
           <v-slider
             v-model="parameters.A"
             class="align-center mb-0 pb-0"
@@ -216,7 +216,7 @@
           </v-slider>
         </v-col>
         <v-col cols="12" md="6" lg="4" xl="3">
-          <h3>Discharge factor</h3>
+          <h3>Discharge factor (B)</h3>
           <v-slider
             v-model="parameters.B"
             class="align-center mb-0 pb-0"
@@ -237,7 +237,7 @@
           </v-slider>
         </v-col>
         <v-col cols="12" md="6" lg="4" xl="3">
-          <h3>The maximum value of the offset</h3>
+          <h3>The maximum value of the offset (u_max)</h3>
           <v-slider
             v-model="parameters.u_max"
             class="align-center mb-0 pb-0"
@@ -258,9 +258,9 @@
           </v-slider>
         </v-col>
         <v-col cols="12" md="6" lg="4" xl="3">
-          <h3>The minimum value of the offset</h3>
+          <h3>The minimum value of the offset (u_min)(</h3>
           <v-slider
-            v-model="parameters.u_max"
+            v-model="parameters.u_min"
             class="align-center mb-0 pb-0"
             :max="10"
             :min="0"
@@ -268,7 +268,7 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model="parameters.u_max"
+                v-model="parameters.u_min"
                 class="mt-0 pt-0 align-center"
                 hide-details
                 single-line
@@ -300,7 +300,7 @@
           </v-slider>
         </v-col>
         <v-col cols="12" md="6" lg="4" xl="3">
-          <h3>Minimum inflow rate (Q_d_max)</h3>
+          <h3>Minimum inflow rate (Q_d_min)</h3>
           <v-slider
             v-model="parameters.Q_d_min"
             class="align-center mb-0 pb-0"
@@ -373,9 +373,55 @@ export default {
   methods: {
     saveParameteres() {
       axios
-        .post(apiUrl + "/set-params", {
-          ...this.$data.parameters,
-        })
+        .post(
+          apiUrl +
+            "/set-params?" +
+            "sample_time=" +
+            this.parameters.sample_time +
+            "&" +
+            "differential_time=" +
+            this.parameters.differential_time +
+            "&" +
+            "integration_time=" +
+            this.parameters.integration_time +
+            "&" +
+            "gain=" +
+            this.parameters.gain +
+            "&" +
+            "k_e=" +
+            this.parameters.k_e +
+            "&" +
+            "k_ce=" +
+            this.parameters.k_ce +
+            "&" +
+            "k_u=" +
+            this.parameters.k_u +
+            "&" +
+            "h_z=" +
+            this.parameters.h_z +
+            "&" +
+            "A=" +
+            this.parameters.A +
+            "&" +
+            "B=" +
+            this.parameters.B +
+            "&" +
+            "h_max=" +
+            this.parameters.h_max +
+            "&" +
+            "u_max=" +
+            this.parameters.u_max +
+            "&" +
+            "u_min=" +
+            this.parameters.u_min +
+            "&" +
+            "Q_d_max=" +
+            this.parameters.Q_d_max +
+            "&" +
+            "Q_d_min=" +
+            this.parameters.Q_d_min +
+            "&"
+        )
         .then((response) => {
           // console.log(response);
           this.snackColor = "green";
@@ -385,7 +431,7 @@ export default {
         .catch((err) => {
           console.error(err);
           this.snackColor = "red";
-          this.message = err.data.message;
+          this.message = err.response.data.message;
           this.snackbar = true;
         });
     },
